@@ -16,4 +16,4 @@ test: all
 	python3 -m pytest -v
 
 clean:
-	rm -rf __pycache__ .pytest_cache *.so
+	rm -rf __pycache__ .pytest_cache *.so *.o
