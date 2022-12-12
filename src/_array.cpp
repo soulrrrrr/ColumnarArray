@@ -18,6 +18,7 @@ void check_dim(vector<size_t> v1, vector<size_t> v2)
 class Array {
 public:
     Array(): m_size(0) {}
+    Array(int n): m_data(vector<int>(n, 0)), m_size(n), m_dim(vector<size_t>(1, n)) {}
     Array(vector<int> v): m_data(v), m_size(v.size()), m_dim(vector<size_t>(1, v.size())) {}
     Array(vector<int> v, vector<size_t> dim): m_data(v), m_size(v.size()), m_dim(dim) {}
 
@@ -59,7 +60,7 @@ public:
         return true;
     }
 
-    Array arange(const vector<size_t>& v)
+    Array reshape(const vector<size_t>& v)
     {
         size_t size = 1;
         for (auto i : v)
@@ -94,6 +95,30 @@ Array ones(vector<size_t> dim)
     for (size_t d : dim)
         size *= d;
     return Array(vector<int>(size, 1), dim);
+}
+
+Array matmul(Array a1, Array a2)
+{
+    if (a1.m_dim.size() != 2 || a2.m_dim.size() != 2)
+        throw std::range_error("2 array should all be 2d array");
+    if (a1.m_dim[1] != a2.m_dim[0])
+        throw std::range_error("array 1's dim[1] should be equal to array 2's dim[0]");
+    Array ret(a1.m_dim[0]*a2.m_dim[1]);
+    ret = ret.reshape({a1.m_dim[0], a2.m_dim[1]});
+    int n = a1.m_dim[0], m = a2.m_dim[0], l = a2.m_dim[1];
+    for (int i = 0; i < n; i++)
+    {
+        for (int k = 0; k < l; k++)
+        {
+            int tmp = 0;
+            for (int j = 0; j < m; j++)
+            {
+                tmp += (a1.m_data[i * m + j] * a2.m_data[j * l + k]);
+            }
+            ret.m_data[i * l + k] = tmp;
+        }
+    }
+    return ret;
 }
 
 PYBIND11_MODULE(_array, m) {
@@ -135,12 +160,15 @@ PYBIND11_MODULE(_array, m) {
             for (auto i : self.m_data)
                 py::print(i);
         })
-        .def("arange", &Array::arange)
+        .def("reshape", &Array::reshape)
         .def("__add__", [](Array &a1, Array &a2){ return a1 + a2;})
         .def("__sub__", [](Array &a1, Array &a2){ return a1 - a2;})
         .def("__mul__", [](Array &a1, Array &a2){ return a1 * a2;})
+        .def("__matmul__", &matmul)
         .def("__eq__", [](Array &a1, Array &a2){ return a1 == a2;})
-        .def_readonly("size", &Array::m_size);
+        .def("__ne__", [](Array &a1, Array &a2){ return !(a1 == a2);})
+        .def_readonly("size", &Array::m_size)
+        .def_readonly("dim", &Array::m_dim);
     m.def("zeros", &zeros);
     m.def("ones", &ones);
 
