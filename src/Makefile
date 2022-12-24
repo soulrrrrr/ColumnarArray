@@ -1,7 +1,7 @@
 CXX=g++
 INCLUDE = $(shell python3 -m pybind11 --includes)
 CFLAGS = -O3 -Wall -shared -std=c++17 -fPIC
-MKL_FLAGS = -I/usr/include/mkl
+MKL_FLAGS = -I/usr/include/mkl -lblas
 PYCONFIG = $(shell python3-config --includes)
 SUFFIX = $(shell python3-config --extension-suffix)
 MKL_LIB_DIR=/usr/lib/x86_64-linux-gnu
@@ -19,7 +19,7 @@ all: _array
 
 _array: _array.cpp
 
-	$(CXX) $(CFLAGS) $(INCLUDE) $< -o $@$(SUFFIX) $(PYCONFIG) $(MKL_FLAGS) ${MKL_LIBS}
+	$(CXX) $(CFLAGS) $(INCLUDE) $< -o $@$(SUFFIX) $(PYCONFIG) $(MKL_FLAGS) $(MKL_LIBS)
 
 test: all
 	python3 -m pytest -v
