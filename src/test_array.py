@@ -14,7 +14,7 @@ def test_zeros():
 
 def test_get():
     b = _array.Array([1, 2, 3, 4, 5, 6]).reshape([2, 3])
-    assert b[1, 0] == b[4]
+    assert b[1, 0] == b[3]
     with pytest.raises(ValueError):
         b[0, 0, 0] = 0
 
@@ -24,7 +24,7 @@ def test_set():
     assert a[0] == 1
     a[0] = 3
     assert a[0] == 3
-    assert b[1, 2] == 7
+    assert b[1, 2] == 6
     b[5] = 7
     assert b[5] == 7
 
@@ -63,7 +63,7 @@ def test_float_zeros():
 
 def test_float_get():
     b = _array.ArrayF([1, 2, 3, 4, 5, 6]).reshape([2, 3])
-    assert b[1, 0] == b[4]
+    assert b[1, 0] == b[3]
     with pytest.raises(ValueError):
         b[0, 0, 0] = 0
 
@@ -73,7 +73,7 @@ def test_float_set():
     assert a[0] == 1
     a[0] = 3
     assert a[0] == 3
-    assert b[1, 2] == 7
+    assert b[1, 2] == 6
     b[5] = 7
     assert b[5] == 7
 

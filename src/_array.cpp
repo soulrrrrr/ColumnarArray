@@ -275,8 +275,8 @@ PYBIND11_MODULE(_array, m) {
         .def("__getitem__", [](Array<double> &self, vector<size_t> idx) {
             if (self.m_dim.size() != idx.size())
                 throw std::range_error("the dimension of query indexes should be as same as the dimension of the array");
-            size_t real_idx = 0;
-            for (int i = idx.size()-1; i >= 0; i--)
+            size_t real_idx = idx[0];
+            for (int i = 1; i < idx.size(); i++)
             {
                 real_idx *= self.m_dim[i];
                 real_idx += idx[i];
@@ -291,8 +291,8 @@ PYBIND11_MODULE(_array, m) {
         .def("__setitem__", [](Array<double> &self, vector<size_t> idx, const double value) {
             if (self.m_dim.size() != idx.size())
                 throw std::range_error("the dimension of query indexes should be as same as the dimension of the array");
-            size_t real_idx = 0;
-            for (int i = idx.size()-1; i >= 0; i--)
+            size_t real_idx = idx[0];
+            for (int i = 1; i < idx.size(); i++)
             {
                 real_idx *= self.m_dim[i];
                 real_idx += idx[i];
